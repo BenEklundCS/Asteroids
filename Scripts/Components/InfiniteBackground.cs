@@ -10,6 +10,8 @@ namespace Asteroids.Scripts.Components {
         [Export] public Vector2 SpriteScale = new (2.5f, 2.5f);
         [Export] public int SpriteZIndex = -100;
 
+        [Export] public Player TrackedPlayer;
+
         private Sprite2D _backgroundSprite;
         private Sprite2D _midgroundSprite;
         private Sprite2D _foregroundSprite;
@@ -29,23 +31,42 @@ namespace Asteroids.Scripts.Components {
             
             BindTextures();
             
-            Apply(sprite => sprite.RegionEnabled = true);
+            Apply(sprite => {
+                sprite.RegionEnabled = true;
+                sprite.TextureRepeat = CanvasItem.TextureRepeatEnum.Enabled;
+            });
         }
 
         public override void _Process(double delta) {
-            ProcessSprite(_backgroundSprite, Background, ref _backgroundOffset, BackgroundScrollSpeed, (float)delta);
-            ProcessSprite(_midgroundSprite, Midground, ref _midgroundOffset, MidgroundScrollSpeed, (float)delta);
-            ProcessSprite(_foregroundSprite, Foreground, ref _foregroundOffset, ForegroundScrollSpeed, (float)delta);
+            var fdelta = (float)delta;
+            ProcessSprite(_backgroundSprite, Background, ref _backgroundOffset, BackgroundScrollSpeed, fdelta);
+            ProcessSprite(_midgroundSprite, Midground, ref _midgroundOffset, MidgroundScrollSpeed, fdelta);
+            ProcessSprite(_foregroundSprite, Foreground, ref _foregroundOffset, ForegroundScrollSpeed, fdelta);
         }
 
         private void ProcessSprite(Sprite2D sprite, Texture2D texture, ref Vector2 offset, float speed, float fdelta) {
-            offset.X += speed * fdelta;
+            var forward = -TrackedPlayer.Transform.Y.Normalized();
+            
+            offset.X += forward.X * speed * fdelta;
+            offset.Y += forward.Y * speed * fdelta;
+            
             if (offset.X > texture.GetWidth()) {
-                offset.X -= texture.GetWidth();
+                offset.X = texture.GetWidth();
             }
+
+            // reset x if it exceeds texture width
+            offset.X = Mathf.PosMod(offset.X, texture.GetWidth());
+            offset.Y = Mathf.PosMod(offset.Y, texture.GetHeight());
+
+            if (offset.Y > texture.GetHeight() || offset.Y < 0) {
+                offset.Y = texture.GetHeight();
+            }
+
             var rect = new Rect2(offset, GetViewportRect().Size);
             sprite.RegionRect = rect;
         }
+        
+        private static float Wrap(float value, float max) => (value % max + max) % max;
 
         private void BindTextures() {
             _backgroundSprite.Texture = Background;

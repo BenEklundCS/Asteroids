@@ -1,6 +1,7 @@
 using Godot;
 using static Godot.GD;
 using System;
+using Asteroids.Scripts.Components;
 
 namespace Asteroids.Scripts {
     public partial class Player : Object {

@@ -10,12 +10,10 @@ namespace Asteroids.Scripts {
             MoveAndWrap(delta);
         }
 
-        private static float Wrap(float value, float max) => (value % max + max) % max;
-
         private void MoveAndWrap(double delta) {
             Position = new Vector2(
-                Wrap(Position.X, GetViewportRect().Size.X), 
-                Wrap(Position.Y, GetViewportRect().Size.Y)
+                Mathf.PosMod(Position.X, GetViewportRect().Size.X), 
+                Mathf.PosMod(Position.Y, GetViewportRect().Size.Y)
             ) + _velocity * (float)delta;
         }
 
