@@ -2,10 +2,10 @@ using Godot;
 using static Godot.GD;
 using System;
 
-namespace Asteroids.Scripts {
+namespace Asteroids.Scripts.Entities {
     public partial class Object : Node2D {
-        private Vector2 _velocity;
-        
+        public Vector2 Velocity { get; protected set; }
+
         public override void _Process(double delta) {
             MoveAndWrap(delta);
         }
@@ -14,15 +14,7 @@ namespace Asteroids.Scripts {
             Position = new Vector2(
                 Mathf.PosMod(Position.X, GetViewportRect().Size.X), 
                 Mathf.PosMod(Position.Y, GetViewportRect().Size.Y)
-            ) + _velocity * (float)delta;
-        }
-
-        protected void SetVelocity(Vector2 velocity) {
-            _velocity = velocity;
-        }
-
-        protected Vector2 GetVelocity() {
-            return _velocity;
+            ) + Velocity * (float)delta;
         }
     }
 }

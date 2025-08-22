@@ -1,30 +1,40 @@
 using Godot;
+using static Godot.GD;
 using System;
 using Asteroids.Scripts;
+using Asteroids.Scripts.Entities;
+using Asteroids.Scripts.Interfaces;
 
-public partial class Controller : Node2D {
-    [Export] public string TargetPlayer = "Player";
-    private Player _controlTarget;
+namespace Asteroids.Scripts.Components {
+    public partial class Controller : Node2D {
+        [Export] public string Target = "Player";
+        
+        private IControllable _controlTarget;
 
-    public override void _Ready() {
-        _controlTarget = GetNode<Player>(TargetPlayer);
-    }
-
-    public override void _Process(double delta) {
-        if (Input.IsActionPressed("boost")) {
-            _controlTarget.Boost();
+        public override void _Ready() {
+            _controlTarget = GetNode<IControllable>(Target);
         }
 
-        if (Input.IsActionPressed("stop")) {
-            _controlTarget.Stop();
-        }
+        public override void _Process(double delta) {
+            if (Input.IsActionPressed("boost")) {
+                _controlTarget.Boost();
+            }
 
-        if (Input.IsActionPressed("right")) {
-            _controlTarget.Right();
-        }
+            if (Input.IsActionPressed("slow")) {
+                _controlTarget.Slow();
+            }
 
-        if (Input.IsActionPressed("left")) {
-            _controlTarget.Left();
+            if (Input.IsActionPressed("right")) {
+                _controlTarget.Right();
+            }
+
+            if (Input.IsActionPressed("left")) {
+                _controlTarget.Left();
+            }
+
+            if (Input.IsActionPressed("quit")) {
+                Callable.From(() => { GetTree().Quit(); }).CallDeferred();
+            }
         }
-    }
+    }   
 }

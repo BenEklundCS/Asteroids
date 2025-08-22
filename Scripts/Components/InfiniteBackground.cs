@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using Asteroids.Scripts.Entities;
 
 namespace Asteroids.Scripts.Components {
     public partial class InfiniteBackground : Node2D {
@@ -21,8 +22,8 @@ namespace Asteroids.Scripts.Components {
         private Vector2 _foregroundOffset;
 
         [Export] public float BackgroundScrollSpeed = 10.0f;
-        [Export] public float MidgroundScrollSpeed = 30.0f;
-        [Export] public float ForegroundScrollSpeed = 75.0f;
+        [Export] public float MidgroundScrollSpeed = 200.0f;
+        [Export] public float ForegroundScrollSpeed = 550.0f;
 
         public override void _Ready() {
             _backgroundSprite = GetNode<Sprite2D>("BackgroundSprite");
@@ -45,15 +46,13 @@ namespace Asteroids.Scripts.Components {
         }
 
         private void ProcessSprite(Sprite2D sprite, Texture2D texture, ref Vector2 offset, float speed, float fdelta) {
-            var forward = -TrackedPlayer.Transform.Y.Normalized();
-            
-            offset.X += forward.X * speed * fdelta;
-            offset.Y += forward.Y * speed * fdelta;
-            
-            if (offset.X > texture.GetWidth()) {
-                offset.X = texture.GetWidth();
-            }
+            var forward = TrackedPlayer.Velocity.Normalized();
 
+            if (TrackedPlayer.Velocity.Length() > 0) {
+                offset.X += forward.X * speed * fdelta;
+                offset.Y += forward.Y * speed * fdelta;
+            }
+            
             // reset x if it exceeds texture width
             offset.X = Mathf.PosMod(offset.X, texture.GetWidth());
             offset.Y = Mathf.PosMod(offset.Y, texture.GetHeight());
@@ -65,8 +64,6 @@ namespace Asteroids.Scripts.Components {
             var rect = new Rect2(offset, GetViewportRect().Size);
             sprite.RegionRect = rect;
         }
-        
-        private static float Wrap(float value, float max) => (value % max + max) % max;
 
         private void BindTextures() {
             _backgroundSprite.Texture = Background;
