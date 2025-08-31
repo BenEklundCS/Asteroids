@@ -94,7 +94,7 @@ namespace Asteroids.Scripts.Entities {
                 asteroid.SplitCount = SplitCount - 1;
                 asteroid.Parent = false;
             
-                GetTree().Root.AddChild(asteroid);
+                GetTree().CurrentScene.AddChild(asteroid);
             }
         }
         

@@ -15,8 +15,9 @@ script = ExtResource("1_4g5cr")
 [node name="Controller" parent="." instance=ExtResource("1_8pvmw")]
 
 [node name="Player" parent="Controller" instance=ExtResource("1_i04dx")]
-position = Vector2(466, 463)
+position = Vector2(165, 399)
 scale = Vector2(2, 2)
+BaseVelocity = Vector2(100, 0)
 
 [node name="InfiniteBackground" parent="." node_paths=PackedStringArray("TrackedPlayer") instance=ExtResource("3_vnucn")]
 SpriteScale = Vector2(2.5, 2.5)

@@ -40,6 +40,9 @@ namespace Asteroids.Scripts {
             var gameData = new GameData();
             gameData.HighScore = _ui.HighScore;
             _gameSaver.Save(gameData);
+            Callable.From(() => {
+                GetTree().ChangeSceneToFile("res://Scenes/UI/title.tscn");
+            }).CallDeferred();
         }
 
         private void OnChildEnteredTree(Node node) {

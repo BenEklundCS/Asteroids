@@ -76,7 +76,7 @@ namespace Asteroids.Scripts.Entities {
             var bullet = (Bullet)Load<PackedScene>("res://Scenes/Entities/Bullet.tscn").Instantiate();
             bullet.GlobalPosition = GlobalPosition;
             bullet.Rotation = _pivot.Rotation;
-            GetTree().Root.AddChild(bullet);
+            GetTree().CurrentScene.AddChild(bullet);
             _shootSound.Play();
         }
         
