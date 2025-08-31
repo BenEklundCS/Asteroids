@@ -7,6 +7,8 @@ using Asteroids.Scripts.Interfaces;
 namespace Asteroids.Scripts.Entities {
     public partial class Player : Object, IControllable {
         [Signal] public delegate void OnDeathEventHandler();
+
+        [Signal] public delegate void OnHitEventHandler(int health);
         
         private AnimatedSprite2D _boostEffect;
         private Sprite2D _ship;
@@ -17,7 +19,7 @@ namespace Asteroids.Scripts.Entities {
         private bool _hit;
         private int _flashedTimes = 0;
         private bool _boosting;
-        private int _lives;
+        private int _health;
         
         [Export] public Vector2 BaseVelocity;
         [Export] public Vector2 MaxVelocity = new(300.0f, 300.0f);
@@ -25,7 +27,7 @@ namespace Asteroids.Scripts.Entities {
         [Export] public float Speed = 5.0f;
         [Export] public float RotationSpeed = (float)(Math.PI/180.0f * 2);
         [Export] public int SlowRange = 50;
-        [Export] public int MaxLives = 3;
+        [Export] public int MaxHealth = 3;
         [Export] public int FlashTimes = 6;
         [Export] public Color OnHitModulateColor = Color.Color8(255, 0, 0);
         [Export] public Color DefaultModulateColor = Color.Color8(255, 255, 255);
@@ -40,7 +42,7 @@ namespace Asteroids.Scripts.Entities {
             _boostEffect.Play();
             _flashTimer = GetNode<Timer>("FlashTimer");
             _flashTimer.Timeout += OnFlashTimerTimeout;
-            _lives = MaxLives;
+            _health = MaxHealth;
             Velocity = BaseVelocity;
         }
         
@@ -125,10 +127,11 @@ namespace Asteroids.Scripts.Entities {
 
         private void Hit() {
             _hit = true;
-            _lives--;
-            if (_lives <= 0) {
+            _health--;
+            if (_health <= 0) {
                 Die();
             }
+            EmitSignalOnHit(_health);
         }
 
         private void Die() {

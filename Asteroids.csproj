@@ -6,4 +6,7 @@
   <ItemGroup>
     <Folder Include="Scripts\UI\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Scripts\GameSave.gd" />
+  </ItemGroup>
 </Project>
