@@ -5,4 +5,5 @@ public interface IControllable {
     public void Slow();
     public void Right();
     public void Left();
+    public void Shoot();
 }

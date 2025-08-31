@@ -46,9 +46,9 @@ namespace Asteroids.Scripts.Components {
         }
 
         private void ProcessSprite(Sprite2D sprite, Texture2D texture, ref Vector2 offset, float speed, float fdelta) {
-            var forward = TrackedPlayer.Velocity.Normalized();
+            var forward = (TrackedPlayer != null) ? TrackedPlayer.Velocity.Normalized() : new Vector2(1, 0);
 
-            if (TrackedPlayer.Velocity.Length() > 0) {
+            if (TrackedPlayer == null || TrackedPlayer.Velocity.Length() > 0) {
                 offset.X += forward.X * speed * fdelta;
                 offset.Y += forward.Y * speed * fdelta;
             }

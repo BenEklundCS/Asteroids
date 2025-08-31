@@ -32,6 +32,10 @@ namespace Asteroids.Scripts.Components {
                 _controlTarget.Left();
             }
 
+            if (Input.IsActionJustPressed("shoot")) {
+                _controlTarget.Shoot();
+            }
+
             if (Input.IsActionPressed("quit")) {
                 Callable.From(() => { GetTree().Quit(); }).CallDeferred();
             }

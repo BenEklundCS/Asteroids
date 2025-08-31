@@ -1,6 +1,7 @@
 using Godot;
 using static Godot.GD;
 using System;
+using Asteroids.Scripts.Entities;
 
 namespace Asteroids.Scripts.Components {
     public partial class AsteroidSpawner : Node2D {
@@ -23,20 +24,10 @@ namespace Asteroids.Scripts.Components {
         }
 
         private void SpawnAsteroid() {
-            Print("Asteroid Spawned!");
-            
-            var asteroid = (Node2D)Load<PackedScene>("res://Scenes/Entities/Asteroid.tscn").Instantiate();
+            var asteroid = Asteroid.GetAsteroid();
             asteroid.GlobalPosition = _spawnPoints[Globals.Random.Next(0, _spawnPoints.Length)];
+            
             GetTree().Root.AddChild(asteroid);
-            
-            
-            /*
-            foreach (var spawnPoint in _spawnPoints) {
-                var asteroid = (Node2D)Load<PackedScene>("res://Scenes/Asteroid.tscn").Instantiate();
-                asteroid.GlobalPosition = spawnPoint;
-                GetTree().Root.AddChild(asteroid);
-            }
-            */
         }
     }
 }

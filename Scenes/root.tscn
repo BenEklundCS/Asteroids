@@ -1,11 +1,15 @@
-[gd_scene load_steps=5 format=3 uid="uid://bsxqn63f6u3ss"]
+[gd_scene load_steps=8 format=3 uid="uid://bsxqn63f6u3ss"]
 
+[ext_resource type="Script" uid="uid://ds5x2ecr3gshv" path="res://Scripts/Root.cs" id="1_4g5cr"]
 [ext_resource type="PackedScene" uid="uid://c0guhluqugpyj" path="res://Scenes/Components/controller.tscn" id="1_8pvmw"]
 [ext_resource type="PackedScene" uid="uid://wq7jays4idlb" path="res://Scenes/Entities/player.tscn" id="1_i04dx"]
 [ext_resource type="PackedScene" uid="uid://bf3slvtavt5p5" path="res://Scenes/Components/infinite_background.tscn" id="3_vnucn"]
 [ext_resource type="PackedScene" uid="uid://bt8b7pve5v0yo" path="res://Scenes/Components/asteroid_spawner.tscn" id="5_4g5cr"]
+[ext_resource type="PackedScene" uid="uid://45ijmmnfe2dd" path="res://Scenes/UI/ui.tscn" id="6_ckhy6"]
+[ext_resource type="AudioStream" uid="uid://5q7740ppkqdv" path="res://Sounds/Electronic Vol6 Lazer Invaders Main.wav" id="7_dun2r"]
 
 [node name="Root" type="Node2D"]
+script = ExtResource("1_4g5cr")
 
 [node name="Controller" parent="." instance=ExtResource("1_8pvmw")]
 
@@ -18,3 +22,10 @@ SpriteScale = Vector2(2.5, 2.5)
 TrackedPlayer = NodePath("../Controller/Player")
 
 [node name="AsteroidSpawner" parent="." instance=ExtResource("5_4g5cr")]
+
+[node name="UI" parent="." instance=ExtResource("6_ckhy6")]
+
+[node name="MainTheme" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_dun2r")
+
+[connection signal="finished" from="MainTheme" to="." method="_on_main_theme_finished"]
