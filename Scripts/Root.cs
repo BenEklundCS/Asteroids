@@ -29,7 +29,7 @@ namespace Asteroids.Scripts {
             _mainTheme = GetNode<AudioStreamPlayer>("MainTheme");
             _mainTheme.Finished += OnMainThemeFinished;
             _mainTheme.Play();
-            GetTree().Root.ChildEnteredTree += OnChildEnteredTree;
+            ChildEnteredTree += OnChildEnteredTree;
         }
 
         private void OnMainThemeFinished() {
