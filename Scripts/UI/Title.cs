@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Asteroids.Scripts.UI {
     public partial class Title : Control {
-        private static int _loadedTimes = 0;
+        private static bool _opened = false;
         
         private Button _start;
         private Button _quit;
@@ -16,7 +16,6 @@ namespace Asteroids.Scripts.UI {
         [Export] public string ScoreFormat = "N0";
 
         public override void _Ready() {
-            _loadedTimes++;
             _start = GetNode<Button>("ButtonContainer/Start");
             _quit = GetNode<Button>("ButtonContainer/Quit");
 
@@ -31,12 +30,14 @@ namespace Asteroids.Scripts.UI {
             _highScore = GetNode<Label>("ScoreContainer/HighScoreValue");
             _gameSaver = GetNode<GameSaver>("GameSaver");
             
-            if (_loadedTimes > 1) {
+            if (_opened) {
                 _start.Text = "RESTART";
                 var gameData = _gameSaver.Load();
                 _highScore.Text = gameData.HighScore.ToString(ScoreFormat);
                 _scoreContainer.Visible = true;
             }
+            
+            _opened = true;
         }
 
         private void OnTitleThemeFinished() {
