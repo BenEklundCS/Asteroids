@@ -2,9 +2,10 @@ using Godot;
 using static Godot.GD;
 using System;
 using System.Transactions;
+using Asteroids.Scripts.Interfaces;
 
 namespace Asteroids.Scripts.Entities {
-    public partial class Asteroid : Object {
+    public partial class Asteroid : Object, ISpawnable {
         [Export] public int Min = -5;
         [Export] public int Max = 5;
         [Export] public int DefaultRotationSpeed = 5;
@@ -23,7 +24,7 @@ namespace Asteroids.Scripts.Entities {
         
         public override void _Ready() {
             AddToGroup("Asteroids");
-            
+            Wrappable = true;
             _asteroidSprite = GetNode<AnimatedSprite2D>("AsteroidSprite");
             _asteroidSprite.AnimationFinished += OnAnimationFinished;
             _hitBox = GetNode<Area2D>("Hitbox");
@@ -42,7 +43,7 @@ namespace Asteroids.Scripts.Entities {
             }
         }
 
-        public static Asteroid GetAsteroid() {
+        public Object Spawn() {
             return (Asteroid)Load<PackedScene>("res://Scenes/Entities/Asteroid.tscn").Instantiate();
         }
 
@@ -87,7 +88,7 @@ namespace Asteroids.Scripts.Entities {
 
         private void SpawnChildren() {
             for (var i = 0; i < SpawnCount; i++) {
-                var asteroid = GetAsteroid();
+                var asteroid = (Asteroid)Spawn();
             
                 asteroid.GlobalPosition = GlobalPosition;
                 asteroid.Scale = Scale / 2.0f;

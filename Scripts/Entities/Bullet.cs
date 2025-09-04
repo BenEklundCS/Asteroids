@@ -2,9 +2,10 @@ using Godot;
 using System;
 using static Godot.GD;
 using System.Collections;
+using Asteroids.Scripts.Interfaces;
 
 namespace Asteroids.Scripts.Entities {
-    public partial class Bullet : Object {
+    public partial class Bullet : Object, ISpawnable {
         [Signal]
         public delegate void OnHitEventHandler();
 
@@ -14,15 +15,20 @@ namespace Asteroids.Scripts.Entities {
 
         public override void _Ready() {
             AddToGroup("Bullets");
+            Wrappable = false;
             _hitBox = GetNode<Area2D>("Hitbox");
             _hitBox.AreaEntered += OnAreaEntered;
 
             Velocity = -Transform.Y.Normalized() * Speed;
         }
-
+        
         public override void _Process(double delta) {
             Die();
             base._Process(delta);
+        }
+
+        public Object Spawn() {
+            return (Bullet)Load<PackedScene>("res://Scenes/Entities/bullet.tscn").Instantiate();
         }
 
         private void Die() {

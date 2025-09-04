@@ -52,7 +52,7 @@ namespace Asteroids.Scripts.UI {
         }
 
         private void OnQuitPressed() {
-            GetTree().Quit();
+            Callable.From(() => { GetTree().Quit(); }).CallDeferred();
         }
     }
 }

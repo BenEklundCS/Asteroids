@@ -7,6 +7,7 @@ namespace Asteroids.Scripts.Components {
     public partial class AsteroidSpawner : Node2D {
         private Timer _spawnTimer;
         private Vector2[] _spawnPoints;
+        private Asteroid _asteroidFactory;
         
         public override void _Ready() {
             _spawnPoints = [
@@ -17,6 +18,7 @@ namespace Asteroids.Scripts.Components {
             ];
             _spawnTimer = GetNode<Timer>("Timer");
             _spawnTimer.Timeout += OnSpawnTimerTimeout;
+            _asteroidFactory = new Asteroid();
         }
 
         private void OnSpawnTimerTimeout() {
@@ -24,7 +26,7 @@ namespace Asteroids.Scripts.Components {
         }
 
         private void SpawnAsteroid() {
-            var asteroid = Asteroid.GetAsteroid();
+            var asteroid = (Asteroid)_asteroidFactory.Spawn();
             asteroid.GlobalPosition = _spawnPoints[Globals.Random.Next(0, _spawnPoints.Length)];
             GetTree().CurrentScene.AddChild(asteroid);
         }
