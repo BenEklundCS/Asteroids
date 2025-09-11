@@ -1,4 +1,5 @@
 using Godot;
+using static Godot.GD;
 using System;
 using System.Threading.Tasks;
 
@@ -22,6 +23,22 @@ namespace Asteroids.Scripts.UI {
             _start.Pressed += OnStartPressed;
             _quit.Pressed += OnQuitPressed;
 
+            _start.FocusEntered += () => {
+                _start.Modulate = Color.Color8(0, 255, 0);
+            };
+            _quit.FocusEntered += () => {
+                _quit.Modulate = Color.Color8(0, 255, 0);
+            };
+
+            _start.FocusExited += () => {
+                _start.Modulate = Color.Color8(255, 255, 255);
+            };
+            _quit.FocusExited += () => {
+                _quit.Modulate = Color.Color8(255, 255, 255);
+            };
+            
+            _start.GrabFocus();
+
             _titleTheme = GetNode<AudioStreamPlayer>("TitleTheme");
             _titleTheme.Finished += OnTitleThemeFinished;
             _titleTheme.Play();
@@ -31,7 +48,7 @@ namespace Asteroids.Scripts.UI {
             _gameSaver = GetNode<GameSaver>("GameSaver");
             
             if (_opened) {
-                _start.Text = "RESTART";
+                _start.Text = "> RESTART";
                 var gameData = _gameSaver.Load();
                 _highScore.Text = gameData.HighScore.ToString(ScoreFormat);
                 _scoreContainer.Visible = true;
@@ -39,17 +56,13 @@ namespace Asteroids.Scripts.UI {
             
             _opened = true;
         }
-
+        
         private void OnTitleThemeFinished() {
             _titleTheme.Play();
         }
 
         private void OnStartPressed() {
             GetTree().ChangeSceneToFile("res://Scenes/root.tscn");
-        }
-
-        private void OnSettingsPressed() {
-            
         }
 
         private void OnQuitPressed() {

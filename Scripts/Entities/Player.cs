@@ -14,6 +14,7 @@ namespace Asteroids.Scripts.Entities {
         private Area2D _hitBox;
         private Node2D _pivot;
         private AudioStreamPlayer _shootSound;
+        private AudioStreamPlayer _hitSound;
         private Timer _flashTimer;
         private bool _hit;
         private int _flashedTimes = 0;
@@ -40,6 +41,7 @@ namespace Asteroids.Scripts.Entities {
             _hitBox.AreaEntered += OnAreaEntered;
             _pivot = GetNode<Node2D>("Pivot");
             _shootSound = GetNode<AudioStreamPlayer>("ShootSound");
+            _hitSound = GetNode<AudioStreamPlayer>("HitSound");
             _boostEffect.Play();
             _flashTimer = GetNode<Timer>("FlashTimer");
             _flashTimer.Timeout += OnFlashTimerTimeout;
@@ -134,6 +136,7 @@ namespace Asteroids.Scripts.Entities {
         }
 
         private void Hit() {
+            _hitSound.Play();
             _hit = true;
             _health--;
             if (_health <= 0) {
