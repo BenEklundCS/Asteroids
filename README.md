@@ -9,7 +9,15 @@ A simple clone of Asteroids, built from scratch using the Godot Engine and C#.
 ---
 
 ## 🎮 Features
-WIP
+- All-directional parallax scrolling background.
+- Scorekeeping and high score tracking.
+- Shoot asteroids to get points, and destroy them - before they destroy you!
+
+## Controls:
+
+- Arrow keys or WASD to move.
+- Spacebar or LMB to shoot!
+- Exit with ESC.
 
 ---
 
