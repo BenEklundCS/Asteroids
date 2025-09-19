@@ -12,6 +12,8 @@ A simple clone of Asteroids, built from scratch using the Godot Engine and C#.
 - All-directional parallax scrolling background.
 - Scorekeeping and high score tracking.
 - Shoot asteroids to get points, and destroy them - before they destroy you!
+- Invader ships will attack and shoot at the player! Watch out.
+- Power ups, including shields and extra lives.
 
 ## Controls:
 
