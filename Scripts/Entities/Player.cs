@@ -61,6 +61,7 @@ namespace Asteroids.Scripts.Entities {
             var decel = Speed * (float)delta;
             var v = Velocity;
             var newLen = v.Length() - decel;
+            Velocity = (newLen > 0f) ? v.Normalized() * newLen : Vector2.Zero;
         }
 
         public void Left(double delta) {
