@@ -2,15 +2,15 @@ using Godot;
 using static Godot.GD;
 using System;
 using System.Linq;
-using System.Runtime.InteropServices.JavaScript;
+using Object = Asteroids.Scripts.Entities.Object;
 
 namespace Asteroids.Scripts.UI {
     public partial class Ui : Control {
         private int _score;
         public int HighScore { get; private set; }
-        public int Health { get; set; }
+        private int _health;
 
-        private String _heart = "❤️";
+        private string _heart = "❤️";
         
         private Label _scoreLabel;
         private Label _healthLabel;
@@ -25,23 +25,31 @@ namespace Asteroids.Scripts.UI {
 
         public void Init(GameData gameData) {
             HighScore = gameData.HighScore;
-            Health = gameData.Health;
+            _health = gameData.Health;
             SetHealthLabelText();
         }
 
-        public void OnBulletHit() {
-            _score += ScoreMultiplier;
+        public void OnBulletHitAsteroid(Object obj) {
+            UpdateScore(obj.Value);
+        }
+        
+        public void OnInvaderDeath(Object obj) {
+            UpdateScore(obj.Value);
+        }
+
+        public void OnPlayerHit(int health) {
+            _health = health;
+            SetHealthLabelText();
+        }
+
+        private void UpdateScore(int increment = 0) {
+            _score += ScoreMultiplier * increment;
             HighScore = Math.Max(_score, HighScore);
             _scoreLabel.Text = _score.ToString(ScoreFormat);
         }
 
-        public void OnPlayerHit(int health) {
-            Health = health;
-            SetHealthLabelText();
-        }
-
         private void SetHealthLabelText() {
-            _healthLabel.Text = String.Concat(Enumerable.Repeat(_heart, Health));
+            _healthLabel.Text = string.Concat(Enumerable.Repeat(_heart, _health));
         }
     }
 }

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://ds5x2ecr3gshv" path="res://Scripts/Root.cs" id="1_4g5cr"]
 [ext_resource type="PackedScene" uid="uid://c0guhluqugpyj" path="res://Scenes/Components/controller.tscn" id="1_8pvmw"]
-[ext_resource type="PackedScene" uid="uid://wq7jays4idlb" path="res://Scenes/Entities/player.tscn" id="1_i04dx"]
+[ext_resource type="PackedScene" uid="uid://dlux734e261y2" path="res://Scenes/Entities/player.tscn" id="1_i04dx"]
 [ext_resource type="PackedScene" uid="uid://bf3slvtavt5p5" path="res://Scenes/Components/infinite_background.tscn" id="3_vnucn"]
 [ext_resource type="PackedScene" uid="uid://bt8b7pve5v0yo" path="res://Scenes/Components/asteroid_spawner.tscn" id="5_4g5cr"]
 [ext_resource type="PackedScene" uid="uid://45ijmmnfe2dd" path="res://Scenes/UI/ui.tscn" id="6_ckhy6"]
@@ -15,7 +15,7 @@ script = ExtResource("1_4g5cr")
 [node name="Controller" parent="." instance=ExtResource("1_8pvmw")]
 
 [node name="Player" parent="Controller" instance=ExtResource("1_i04dx")]
-position = Vector2(165, 399)
+position = Vector2(187, 406)
 scale = Vector2(2, 2)
 BaseVelocity = Vector2(100, 0)
 

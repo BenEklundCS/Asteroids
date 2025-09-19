@@ -10,11 +10,8 @@ namespace Asteroids.Scripts.Entities {
         [Export] public int Max = 5;
         [Export] public int DefaultRotationSpeed = 5;
         [Export] public int SplitCount = 2;
-        [Export] public float Speed = 100.0f;
         [Export] public bool Parent = true;
         [Export] public int SpawnCount = 2;
-
-        public bool Exploding { get; private set; }
         
         private float _rotationSpeed;
         private AnimatedSprite2D _asteroidSprite;
@@ -25,6 +22,8 @@ namespace Asteroids.Scripts.Entities {
         public override void _Ready() {
             AddToGroup("Asteroids");
             Wrappable = true;
+            Value = 1;
+            
             _asteroidSprite = GetNode<AnimatedSprite2D>("AsteroidSprite");
             _asteroidSprite.AnimationFinished += OnAnimationFinished;
             _hitBox = GetNode<Area2D>("Hitbox");
@@ -56,17 +55,6 @@ namespace Asteroids.Scripts.Entities {
             if (_explodable) {
                 _hitBox.QueueFree(); // delete the hitbox so it's not hittable
                 _asteroidSprite.Play();
-                Exploding = true;
-            }
-        }
-
-        private void SeekCenter() {
-            Velocity = Position.DirectionTo(GetCenter()) * Speed;
-            return;
-            
-            Vector2 GetCenter() {
-                var viewport = GetViewportRect(); 
-                return new Vector2(viewport.Size.X / 2.0f, viewport.Size.Y / 2.0f);
             }
         }
 

@@ -1,53 +1,47 @@
 using Godot;
 using static Godot.GD;
 using System;
+using System.Transactions;
 using Asteroids.Scripts.Components;
 using Asteroids.Scripts.Interfaces;
 
 namespace Asteroids.Scripts.Entities {
-    public partial class Player : Object, IControllable {
-        [Signal] public delegate void OnDeathEventHandler();
-        [Signal] public delegate void OnHitEventHandler(int health);
-
-        private AnimatedSprite2D _boostEffect;
-        private Sprite2D _ship;
-        private Area2D _hitBox;
+    public partial class Player : Ship, IControllable {
+        
         private Node2D _pivot;
-        private AudioStreamPlayer _shootSound;
+        private Timer _shieldTimer;
+        private Timer _shootCooldownTimer;
         private AudioStreamPlayer _hitSound;
-        private Timer _flashTimer;
-        private bool _hit;
-        private int _flashedTimes = 0;
         private bool _boosting;
-        private int _health;
-        private Bullet _bulletFactory;
+        private bool _canShoot = true;
+        private bool _shielded;
+        private Bullet _bulletFactory = new ();
 
         [Export] public Vector2 BaseVelocity;
-        [Export] public float MaxVelocity = 300.0f; // treated as a speed cap via .Length()
-        [Export] public float MinVelocity = 2.0f;                  // below this, snap to 0
-        [Export] public float Speed = 300.0f;                      // acceleration (units per second^2)
-        [Export] public float RotationSpeed = (float)(Math.PI/180.0f * 180.0f); // rad/sec (here: 180°/s)
+        [Export] public float MaxVelocity = 300.0f; 
+        [Export] public float MinVelocity = 2.0f;                
+        [Export] public new float Speed = 300.0f;                
+        [Export] public float RotationSpeed = (float)(Math.PI/180.0f * 180.0f);
         [Export] public int SlowRange = 50;
-        [Export] public int MaxHealth = 3;
-        [Export] public int FlashTimes = 6;
-        [Export] public Color OnHitModulateColor = Color.Color8(255, 0, 0);
-        [Export] public Color DefaultModulateColor = Color.Color8(255, 255, 255);
+        [Export] public Color ShieldModulateColor = Color.Color8(0, 255, 255);
 
         public override void _Ready() {
             Wrappable = true;
-            _boostEffect = GetNode<AnimatedSprite2D>("Pivot/BoostEffect");
-            _ship = GetNode<Sprite2D>("Pivot/Ship");
-            _hitBox = GetNode<Area2D>("Pivot/Hitbox");
-            _hitBox.AreaEntered += OnAreaEntered;
+            
             _pivot = GetNode<Node2D>("Pivot");
-            _shootSound = GetNode<AudioStreamPlayer>("ShootSound");
+            
+            _shieldTimer = GetNode<Timer>("ShieldTimer");
+            _shieldTimer.Timeout += OnShieldTimerTimeout;
+            
+            _shootCooldownTimer = GetNode<Timer>("ShootCooldownTimer");
+            _shootCooldownTimer.Timeout += OnShootTimerTimeout;
+            
             _hitSound = GetNode<AudioStreamPlayer>("HitSound");
-            _boostEffect.Play();
-            _flashTimer = GetNode<Timer>("FlashTimer");
-            _flashTimer.Timeout += OnFlashTimerTimeout;
-            _health = MaxHealth;
+            
+            Health = MaxHealth;
             Velocity = BaseVelocity;
-            _bulletFactory = new Bullet();
+            
+            base._Ready();
         }
 
         public override void _Process(double delta) {
@@ -58,19 +52,15 @@ namespace Asteroids.Scripts.Entities {
 
         public void Boost(double delta) {
             _boosting = true;
-            // accelerate forward with delta
             Velocity += GetForward() * (Speed * (float)delta);
         }
 
         public void Slow(double delta) {
             _boosting = true;
-            if (Velocity.Length() > 0f) {
-                // decelerate toward zero with delta
-                var decel = Speed * (float)delta;
-                var v = Velocity;
-                var newLen = v.Length() - decel;
-                Velocity = (newLen > 0f) ? v.Normalized() * newLen : Vector2.Zero;
-            }
+            if (Velocity.Length() <= 0.0f) return;
+            var decel = Speed * (float)delta;
+            var v = Velocity;
+            var newLen = v.Length() - decel;
         }
 
         public void Left(double delta) {
@@ -81,18 +71,50 @@ namespace Asteroids.Scripts.Entities {
             _pivot.Rotation += RotationSpeed * (float)delta;
         }
 
-        public void Shoot() {
+        public override void Shoot() {
+            if (_shootCooldownTimer.IsStopped() == false) return;
+            _canShoot = false;
             var bullet = (Bullet)_bulletFactory.Spawn();
             bullet.GlobalPosition = GlobalPosition;
             bullet.Rotation = _pivot.Rotation;
+            bullet.Target = Bullet.BulletType.Enemy;
             GetTree().CurrentScene.AddChild(bullet);
-            _shootSound.Play();
+            _shootCooldownTimer.Start();
+            base.Shoot();
+        }
+        
+        public void ActivateShield() {
+            Print("ACTIVATE SHIELD");
+            _shieldTimer.Stop();
+            _shielded = true;
+            _shieldTimer.Start();
+            ShipSprite.SetModulate(ShieldModulateColor);
+        }
+        
+        private void DisableShield() {
+            _shielded = false;
+            ShipSprite.SetModulate(DefaultModulateColor);
+        }
+
+        protected override void OnAreaEntered(Area2D area) {
+            if (area.GetParent().IsInGroup("Asteroids") || 
+                (area.GetParent() is Bullet && ((Bullet)area.GetParent()).Target == Bullet.BulletType.Player)) {
+                if (!_shielded) {
+                    _hitSound.Play();
+                    Hit();
+                }
+            }
+            if (area.GetParent().IsInGroup("Powerups")) {
+                var powerup = (Powerup)area.GetParent();
+                powerup.ApplyEffect(this);
+                powerup.QueueFree();
+            }
         }
 
         private Vector2 GetForward() => -_pivot.Transform.Y.Normalized();
 
         private void ClampVelocity() {
-            var maxSpeed = MaxVelocity; // use scalar cap
+            var maxSpeed = MaxVelocity;
             var len = Velocity.Length();
 
             if (len > maxSpeed) {
@@ -105,48 +127,17 @@ namespace Asteroids.Scripts.Entities {
         }
 
         private void Animate(double delta) {
-            _boostEffect.Animation = _boosting ? "boost" : "idle";
+            if (BoostEffect == null) return;
+            BoostEffect.Animation = _boosting ? "boost" : "idle";
             _boosting = false;
         }
-
-        private void OnFlashTimerTimeout() {
-            if (!_hit) return;
-
-            _flashedTimes++;
-            if (_flashedTimes > FlashTimes) {
-                ResetHit();
-            }
-
-            var color = (_flashedTimes % 2 != 0)
-                ? OnHitModulateColor
-                : DefaultModulateColor;
-            _ship.SetModulate(color);
+        
+        private void OnShieldTimerTimeout() {
+            DisableShield();
         }
 
-        private void ResetHit() {
-            _ship.SetModulate(DefaultModulateColor);
-            _hit = false;
-            _flashedTimes = 0;
-        }
-
-        private void OnAreaEntered(Area2D area) {
-            if (area.GetParent() is Asteroid) {
-                Hit();
-            }
-        }
-
-        private void Hit() {
-            _hitSound.Play();
-            _hit = true;
-            _health--;
-            if (_health <= 0) {
-                Die();
-            }
-            EmitSignalOnHit(_health);
-        }
-
-        private void Die() {
-            EmitSignalOnDeath();
+        private void OnShootTimerTimeout() {
+            _canShoot = true;
         }
     }
 }

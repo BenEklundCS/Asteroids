@@ -29,6 +29,8 @@ project/assembly_name="Asteroids"
 
 Asteroids=""
 Bullets=""
+Powerups=""
+Invaders=""
 
 [input]
 

@@ -2,7 +2,7 @@ using Godot;
 using static Godot.GD;
 using System;
 using Asteroids.Scripts.Entities;
-
+using Asteroids.Scripts.Interfaces;
 using Asteroids.Scripts.UI;
 
 namespace Asteroids.Scripts {
@@ -11,11 +11,12 @@ namespace Asteroids.Scripts {
         private GameSaver _gameSaver;
         private AudioStreamPlayer _mainTheme;
         private Player _player;
+
         private int _score;
         
         public override void _Ready() {
             _player = GetNode<Player>("Controller/Player");
-            _player.OnDeath += OnPlayerDeath;
+            _player.OnDeath += (value) => OnPlayerDeath(value);
             
             _gameSaver = GetNode<GameSaver>("GameSaver");
             var gameData = _gameSaver.Load();
@@ -29,6 +30,7 @@ namespace Asteroids.Scripts {
             _mainTheme = GetNode<AudioStreamPlayer>("MainTheme");
             _mainTheme.Finished += OnMainThemeFinished;
             _mainTheme.Play();
+            
             ChildEnteredTree += OnChildEnteredTree;
         }
 
@@ -36,7 +38,7 @@ namespace Asteroids.Scripts {
             _mainTheme.Play();
         }
 
-        private void OnPlayerDeath() {
+        private void OnPlayerDeath(Ship ship) {
             var gameData = new GameData();
             gameData.HighScore = _ui.HighScore;
             _gameSaver.Save(gameData);
@@ -47,7 +49,12 @@ namespace Asteroids.Scripts {
 
         private void OnChildEnteredTree(Node node) {
             if (node.IsInGroup("Bullets")) {
-                ((Bullet)node).OnHit += _ui.OnBulletHit;
+                ((Bullet)node).OnHit += (value) => _ui.OnBulletHitAsteroid(value);
+            }
+            else if (node.IsInGroup("Invaders")) {
+                ((Invader)node).OnDeath += (value) => {
+                    _ui.OnInvaderDeath(value);
+                };
             }
         }
     }
