@@ -40,9 +40,15 @@ namespace Asteroids.Scripts.Components {
 
         public override void _Process(double delta) {
             var fdelta = (float)delta;
-            ProcessSprite(_backgroundSprite, Background, ref _backgroundOffset, BackgroundScrollSpeed, fdelta);
-            ProcessSprite(_midgroundSprite, Midground, ref _midgroundOffset, MidgroundScrollSpeed, fdelta);
-            ProcessSprite(_foregroundSprite, Foreground, ref _foregroundOffset, ForegroundScrollSpeed, fdelta);
+            ProcessSprite(_backgroundSprite, Background, ref _backgroundOffset, ScaleSpeedToPlayer(BackgroundScrollSpeed), fdelta);
+            ProcessSprite(_midgroundSprite, Midground, ref _midgroundOffset, ScaleSpeedToPlayer(MidgroundScrollSpeed), fdelta);
+            ProcessSprite(_foregroundSprite, Foreground, ref _foregroundOffset, ScaleSpeedToPlayer(ForegroundScrollSpeed), fdelta);
+        }
+
+        private float ScaleSpeedToPlayer(float speed) {
+            if (TrackedPlayer == null) return speed;
+            var playerSpeed = TrackedPlayer.Velocity.Length();
+            return speed * (playerSpeed / TrackedPlayer.MaxVelocity);
         }
 
         private void ProcessSprite(Sprite2D sprite, Texture2D texture, ref Vector2 offset, float speed, float fdelta) {

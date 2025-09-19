@@ -23,7 +23,7 @@ namespace Asteroids.Scripts.Entities {
         private Bullet _bulletFactory;
 
         [Export] public Vector2 BaseVelocity;
-        [Export] public Vector2 MaxVelocity = new(300.0f, 300.0f); // treated as a speed cap via .Length()
+        [Export] public float MaxVelocity = 300.0f; // treated as a speed cap via .Length()
         [Export] public float MinVelocity = 2.0f;                  // below this, snap to 0
         [Export] public float Speed = 300.0f;                      // acceleration (units per second^2)
         [Export] public float RotationSpeed = (float)(Math.PI/180.0f * 180.0f); // rad/sec (here: 180°/s)
@@ -92,7 +92,7 @@ namespace Asteroids.Scripts.Entities {
         private Vector2 GetForward() => -_pivot.Transform.Y.Normalized();
 
         private void ClampVelocity() {
-            var maxSpeed = MaxVelocity.Length(); // use scalar cap
+            var maxSpeed = MaxVelocity; // use scalar cap
             var len = Velocity.Length();
 
             if (len > maxSpeed) {
