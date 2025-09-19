@@ -85,7 +85,6 @@ namespace Asteroids.Scripts.Entities {
         }
         
         public void ActivateShield() {
-            Print("ACTIVATE SHIELD");
             _shieldTimer.Stop();
             _shielded = true;
             _shieldTimer.Start();

@@ -56,7 +56,6 @@ namespace Asteroids.Scripts.Entities {
         }
         
         private void OnMoveDurationTimerTimeout() {
-            Print("Move duration ended, seeking new direction");
             Velocity = Vector2.Zero;
         }
     }
