@@ -47,11 +47,11 @@ namespace Asteroids.Scripts.UI {
             _highScore = GetNode<Label>("ScoreContainer/HighScoreValue");
             _gameSaver = GetNode<GameSaver>("GameSaver");
             
+            var gameData = _gameSaver.Load();
+            _highScore.Text = gameData.HighScore.ToString(ScoreFormat);
+            
             if (_opened) {
                 _start.Text = "> RESTART";
-                var gameData = _gameSaver.Load();
-                _highScore.Text = gameData.HighScore.ToString(ScoreFormat);
-                _scoreContainer.Visible = true;
             }
             
             _opened = true;
