@@ -43,7 +43,7 @@ namespace Asteroids.Scripts.Entities {
         }
 
         public Object Spawn() {
-            return (Asteroid)Load<PackedScene>("res://Scenes/Entities/Asteroid.tscn").Instantiate();
+            return (Asteroid)Load<PackedScene>("res://Scenes/Entities/asteroid.tscn").Instantiate();
         }
 
         public override void _Process(double delta) {
