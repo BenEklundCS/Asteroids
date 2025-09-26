@@ -17,11 +17,11 @@ namespace Asteroids.Scripts.Components {
 
         public override void _Process(double delta) {
             if (Input.IsActionPressed("boost")) {
-                _controlTarget.Boost(delta);
+                _controlTarget.Boost();
             }
 
             if (Input.IsActionPressed("slow")) {
-                _controlTarget.Slow(delta);
+                _controlTarget.Slow();
             }
 
             if (Input.IsActionPressed("right")) {

@@ -50,15 +50,15 @@ namespace Asteroids.Scripts.Entities {
             base._Process(delta);
         }
 
-        public void Boost(double delta) {
+        public void Boost() {
             _boosting = true;
-            Velocity += GetForward() * (Speed * (float)delta);
+            Velocity += GetForward() * Speed;
         }
 
-        public void Slow(double delta) {
+        public void Slow() {
             _boosting = true;
             if (Velocity.Length() <= 0.0f) return;
-            var decel = Speed * (float)delta;
+            var decel = Speed;
             var v = Velocity;
             var newLen = v.Length() - decel;
             Velocity = (newLen > 0f) ? v.Normalized() * newLen : Vector2.Zero;

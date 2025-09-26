@@ -52,10 +52,9 @@ namespace Asteroids.Scripts.Entities {
         }
 
         private void Explode() {
-            if (_explodable) {
-                _hitBox.QueueFree(); // delete the hitbox so it's not hittable
-                _asteroidSprite.Play();
-            }
+            if (!_explodable) return;
+            _hitBox.QueueFree(); // delete the hitbox so it's not hittable
+            _asteroidSprite.Play();
         }
 
         private void SeekGod() {
