@@ -9,7 +9,7 @@ namespace Asteroids.Scripts.Entities {
         [Export] public int Value = 1;
         protected bool Wrappable { get; set; }
 
-        public override void _Process(double delta) {
+        public override void _PhysicsProcess(double delta) {
             MoveAndWrap(delta);
         }
 
